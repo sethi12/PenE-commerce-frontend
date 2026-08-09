@@ -153,9 +153,9 @@ export default function Home() {
       {/* ---------------- Footer ---------------- */}
       <footer className="border-t border-line px-6 py-12 lg:px-10">
         <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-6 sm:flex-row sm:items-center">
-          <span className="font-display text-lg italic text-ink">VELIN</span>
+          <span className="font-display text-lg italic text-ink">PenZone</span>
           <p className="font-mono text-xs text-graphite">
-            © {new Date().getFullYear()} Velin Pen Co. — Delhi
+            © {new Date().getFullYear()} PenZone Pen Co. — Delhi
           </p>
         </div>
       </footer>
