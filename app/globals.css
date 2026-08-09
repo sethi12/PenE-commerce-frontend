@@ -1,26 +1,114 @@
 @import "tailwindcss";
 
+/* ============================================================
+   VELIN — design tokens
+   Light theme is the default brand theme (warm paper + ink).
+   Dark theme inverts to ink paper + warm parchment text.
+   Brass stays the constant accent across both.
+   ============================================================ */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --paper: #faf7f0;
+  --paper-raised: #ffffff;
+  --ink: #15130f;
+  --graphite: #6e675c;
+  --brass: #a9814a;
+  --brass-soft: #c9a86a;
+  --line: #e6dfd1;
+  --shadow-color: 30 20% 10%;
+
+  --font-display: var(--font-fraunces);
+  --font-body: var(--font-inter);
+  --font-mono: var(--font-jetbrains);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+.dark {
+  --paper: #100e0b;
+  --paper-raised: #17140f;
+  --ink: #f5f1e6;
+  --graphite: #a79d8c;
+  --brass: #c9a86a;
+  --brass-soft: #e0c084;
+  --line: #2b2620;
+  --shadow-color: 0 0% 0%;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  border-color: var(--line);
+}
+
+html {
+  scroll-behavior: auto; /* Lenis takes over smooth scroll */
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  transition: background-color 0.4s ease, color 0.4s ease;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--brass);
+  color: var(--paper);
+}
+
+/* Eyebrow / mono utility label */
+.label-mono {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--brass);
+}
+
+/* Nib-scratch divider — the recurring signature mark */
+.nib-scratch {
+  display: block;
+  width: 84px;
+  height: 14px;
+}
+.nib-scratch path {
+  stroke: var(--brass);
+  fill: none;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+}
+
+/* Hairline divider used between sections instead of hard borders */
+.hairline {
+  height: 1px;
+  width: 100%;
+  background: var(--line);
+}
+
+/* Focus visibility (accessibility floor) */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--brass);
+  outline-offset: 3px;
+}
+
+/* Custom pen cursor — see components/custom-cursor.jsx.
+   Only suppressed on fine-pointer (mouse/trackpad) devices; touch
+   devices never load the component, so nothing to override there. */
+@media (pointer: fine) {
+  html.custom-cursor-active,
+  html.custom-cursor-active a,
+  html.custom-cursor-active button {
+    cursor: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }
