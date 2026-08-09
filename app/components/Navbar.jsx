@@ -3,49 +3,24 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { ThemeToggle } from "./theme-toggle";
+import Image from "next/image";
+import { useTheme } from "./theme-provider";
 
-function PenZoneLogo() {
+export function PenZoneLogo() {
+  const { theme } = useTheme();
+
   return (
     <a href="/" className="group flex items-center gap-2.5" aria-label="PenZone home">
-      {/* Custom 3D Pen / Precision Nozzle SVG Logo */}
-      <svg
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        className="transition-transform duration-300 ease-out group-hover:scale-110 group-hover:rotate-6"
-      >
-        {/* Outer 3D Diamond Barrel */}
-        <path
-          d="M12 2L20 7V13L12 21L4 13V7L12 2Z"
-          stroke="var(--brass)"
-          strokeWidth="1.3"
-          strokeLinejoin="round"
-        />
-        {/* Inner Isometric Facet Lines */}
-        <path
-          d="M4 7L12 11.5L20 7"
-          stroke="var(--brass)"
-          strokeWidth="1.3"
-          strokeLinejoin="round"
-        />
-        <line
-          x1="12"
-          y1="11.5"
-          x2="12"
-          y2="21"
-          stroke="var(--brass)"
-          strokeWidth="1.1"
-          strokeDasharray="2 2"
-          opacity="0.75"
-        />
-        {/* Extruding 3D Filament / Nozzle Tip */}
-        <circle cx="12" cy="21" r="1.2" fill="var(--brass)" />
-      </svg>
-
-      <span className="font-display text-lg font-bold tracking-wider text-ink">
-        PENZONE<span className="text-brass">.</span>
-      </span>
+      <Image
+        src="/logo.png"
+        alt="PenZone Logo"
+        width={240}
+        height={80}
+        priority
+        className={`h-12 w-auto object-contain transition-all duration-300 ease-out group-hover:scale-105 ${
+          theme === "dark" ? "brightness-0 invert" : ""
+        }`}
+      />
     </a>
   );
 }
