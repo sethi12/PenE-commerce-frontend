@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { motion } from "motion/react";
+import { Footer } from "./components/footer";
 
 // The pen scene touches window/canvas — keep it client-only, no SSR.
 const PenScene = dynamic(
@@ -151,14 +152,7 @@ export default function Home() {
       </section>
 
       {/* ---------------- Footer ---------------- */}
-      <footer className="border-t border-line px-6 py-12 lg:px-10">
-        <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-6 sm:flex-row sm:items-center">
-          <span className="font-display text-lg italic text-ink">PenZone</span>
-          <p className="font-mono text-xs text-graphite">
-            © {new Date().getFullYear()} PenZone Pen Co. — Delhi
-          </p>
-        </div>
-      </footer>
+      <Footer/>
     </div>
   );
 }
