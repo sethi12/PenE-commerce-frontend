@@ -62,7 +62,7 @@ export function Navbar() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const navLinks = ["Collection", "Brands", "Sale", "About Us"];
+  const navLinks = ["Collection", "Brands","PreOwned", "Sale", "About Us"];
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
