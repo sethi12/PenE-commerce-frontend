@@ -4,37 +4,52 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { ThemeToggle } from "./theme-toggle";
 
-function NibLogo() {
+function PenZoneLogo() {
   return (
-    <a href="/" className="group flex items-center gap-2" aria-label="Velin home">
+    <a href="/" className="group flex items-center gap-2.5" aria-label="PenZone home">
+      {/* Custom 3D Pen / Precision Nozzle SVG Logo */}
       <svg
-        width="20"
-        height="20"
-        viewBox="0 0 20 20"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
         fill="none"
-        className="transition-transform duration-300 group-hover:-rotate-12"
+        className="transition-transform duration-300 ease-out group-hover:scale-110 group-hover:rotate-6"
       >
+        {/* Outer 3D Diamond Barrel */}
         <path
-          d="M10 1L17 8.5 10 19 3 8.5 10 1Z"
+          d="M12 2L20 7V13L12 21L4 13V7L12 2Z"
           stroke="var(--brass)"
           strokeWidth="1.3"
+          strokeLinejoin="round"
         />
-        <line x1="10" y1="8.5" x2="10" y2="19" stroke="var(--brass)" strokeWidth="1.3" />
+        {/* Inner Isometric Facet Lines */}
+        <path
+          d="M4 7L12 11.5L20 7"
+          stroke="var(--brass)"
+          strokeWidth="1.3"
+          strokeLinejoin="round"
+        />
+        <line
+          x1="12"
+          y1="11.5"
+          x2="12"
+          y2="21"
+          stroke="var(--brass)"
+          strokeWidth="1.1"
+          strokeDasharray="2 2"
+          opacity="0.75"
+        />
+        {/* Extruding 3D Filament / Nozzle Tip */}
+        <circle cx="12" cy="21" r="1.2" fill="var(--brass)" />
       </svg>
-      <span className="font-display text-lg tracking-wide text-ink">
-        VELIN
+
+      <span className="font-display text-lg font-bold tracking-wider text-ink">
+        PENZONE<span className="text-brass">.</span>
       </span>
     </a>
   );
 }
 
-/**
- * Desktop nav link: a small brass "nib dot" grows in before the label,
- * the label eases to brass with slightly wider tracking, and an
- * underline draws left-to-right via a scaleX transform (smoother than
- * animating width, and it shares an origin with the dot so it reads as
- * one coherent motion rather than two unrelated effects).
- */
 function NavLink({ children, ...props }) {
   return (
     <a
@@ -72,7 +87,7 @@ export function Navbar() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const navLinks = ["Collection", "Brands", "Sale", "About Us"];
+  const navLinks = ["Collection", "3D Pens", "Filaments", "About Us"];
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -80,7 +95,6 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Force a solid background if the user scrolls OR if the mobile menu is open
   const isSolidHeader = scrolled || mobileMenuOpen;
 
   return (
@@ -92,7 +106,7 @@ export function Navbar() {
       }`}
     >
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-10">
-        <NibLogo />
+        <PenZoneLogo />
 
         {/* Desktop Navigation */}
         <ul className="hidden items-center gap-8 font-body text-sm md:flex">
@@ -115,7 +129,7 @@ export function Navbar() {
                   exit={{ width: 0, opacity: 0 }}
                   transition={{ duration: 0.25, ease: "easeInOut" }}
                   type="text"
-                  placeholder="Search pens…"
+                  placeholder="Search 3D pens…"
                   autoFocus
                   onBlur={() => setSearchOpen(false)}
                   className="mr-1 h-9 rounded-full border border-line bg-paper-raised px-3 font-body text-sm text-ink outline-none placeholder:text-graphite md:w-[180px]"
@@ -130,7 +144,7 @@ export function Navbar() {
             </IconButton>
           </div>
 
-          {/* Desktop Login (Hidden on mobile to save space) */}
+          {/* Desktop Login */}
           <IconButton label="Log in" className="hidden md:flex">
             <svg width="17" height="17" viewBox="0 0 17 17" fill="none">
               <circle cx="8.5" cy="5.5" r="3" stroke="currentColor" strokeWidth="1.3" />
