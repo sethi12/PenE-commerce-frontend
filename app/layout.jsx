@@ -6,7 +6,7 @@ import { Navbar } from "./components/Navbar";
 import { CustomCursor } from "./components/custom-cursor";
 
 export const metadata = {
-  title: "Velin — Pens made to be kept",
+  title: "PenZone — Pens made to be kept",
   description:
     "Precision-balanced fountain pens in solid brass and hand-lacquered barrels.",
 };
