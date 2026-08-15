@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { ThemeToggle } from "./theme-toggle";
 import Image from "next/image";
 import { useTheme } from "./theme-provider";
+import { useAuth } from "./auth-provider"; // <-- Added import
 
 export function PenZoneLogo() {
   const { theme } = useTheme();
@@ -25,9 +26,10 @@ export function PenZoneLogo() {
   );
 }
 
-function NavLink({ children, ...props }) {
+function NavLink({ children, href, ...props }) {
   return (
     <a
+      href={href}
       {...props}
       className="group relative inline-flex items-center py-1 text-graphite transition-colors duration-300 hover:text-brass"
     >
@@ -40,19 +42,31 @@ function NavLink({ children, ...props }) {
   );
 }
 
-function IconButton({ children, label, onClick, badge, className = "" }) {
-  return (
-    <button
-      onClick={onClick}
-      aria-label={label}
-      className={`relative flex h-9 w-9 items-center justify-center rounded-full text-ink transition-all duration-200 hover:scale-110 hover:bg-brass/10 hover:text-brass ${className}`}
-    >
+function IconButton({ children, label, onClick, badge, className = "", href }) {
+  const content = (
+    <>
       {children}
       {badge ? (
         <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-brass font-mono text-[9px] text-paper">
           {badge}
         </span>
       ) : null}
+    </>
+  );
+
+  const baseClasses = `relative flex h-9 w-9 items-center justify-center rounded-full text-ink transition-all duration-200 hover:scale-110 hover:bg-brass/10 hover:text-brass ${className}`;
+
+  if (href) {
+    return (
+      <a href={href} aria-label={label} className={baseClasses}>
+        {content}
+      </a>
+    );
+  }
+
+  return (
+    <button onClick={onClick} aria-label={label} className={baseClasses}>
+      {content}
     </button>
   );
 }
@@ -61,14 +75,30 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  
+  // <-- Extract auth state
+  const { user, loading } = useAuth(); 
 
-  const navLinks = ["Collection", "Brands","PreOwned", "Sale", "About Us"];
+  const navLinks = [
+    { label: "Collection", href: "/collections" },
+    { label: "Brands", href: "/brands" },
+    { label: "PreOwned", href: "/pre-owned" },
+    { label: "Sale", href: "/sale" },
+    { label: "About Us", href: "/about-us" },
+  ];
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // <-- Helper to format user name
+  const getFirstName = (fullName) => {
+    if (!fullName) return "Profile";
+    const first = fullName.split(" ")[0];
+    return first.charAt(0).toUpperCase() + first.slice(1).toLowerCase();
+  };
 
   const isSolidHeader = scrolled || mobileMenuOpen;
 
@@ -86,8 +116,8 @@ export function Navbar() {
         {/* Desktop Navigation */}
         <ul className="hidden items-center gap-8 font-body text-sm md:flex">
           {navLinks.map((item) => (
-            <li key={item}>
-              <NavLink href="#">{item}</NavLink>
+            <li key={item.label}>
+              <NavLink href={item.href}>{item.label}</NavLink>
             </li>
           ))}
         </ul>
@@ -119,15 +149,29 @@ export function Navbar() {
             </IconButton>
           </div>
 
-          {/* Desktop Login */}
-          <IconButton label="Log in" className="hidden md:flex">
-            <svg width="17" height="17" viewBox="0 0 17 17" fill="none">
-              <circle cx="8.5" cy="5.5" r="3" stroke="currentColor" strokeWidth="1.3" />
-              <path d="M2.5 15c1-3.2 3.6-5 6-5s5 1.8 6 5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
-            </svg>
-          </IconButton>
+          {/* <-- Desktop Auth Section Update --> */}
+          <div className="hidden md:flex items-center justify-center min-w-[36px] mx-1">
+            {loading ? (
+              <svg className="h-4 w-4 animate-spin text-graphite" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" className="opacity-25" />
+                <path fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" className="opacity-75" />
+              </svg>
+            ) : user ? (
+              <a href="/profile" className="font-mono text-sm tracking-widest text-brass transition-colors hover:text-ink">
+                {getFirstName(user.name)}
+              </a>
+            ) : (
+              <IconButton label="Log in" href="/login">
+                <svg width="17" height="17" viewBox="0 0 17 17" fill="none">
+                  <circle cx="8.5" cy="5.5" r="3" stroke="currentColor" strokeWidth="1.3" />
+                  <path d="M2.5 15c1-3.2 3.6-5 6-5s5 1.8 6 5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+                </svg>
+              </IconButton>
+            )}
+          </div>
 
-          <IconButton label="Bag" badge={2}>
+          {/* Shopping Bag Link */}
+          <IconButton label="Bag" href="/cart" badge={2}>
             <svg width="17" height="17" viewBox="0 0 17 17" fill="none">
               <path d="M4 6h9l-.7 8.5a1 1 0 01-1 .9H5.7a1 1 0 01-1-.9L4 6z" stroke="currentColor" strokeWidth="1.3" />
               <path d="M6.2 6V4.3a2.3 2.3 0 014.6 0V6" stroke="currentColor" strokeWidth="1.3" />
@@ -168,15 +212,15 @@ export function Navbar() {
             <div className="flex flex-col px-6 py-6 font-body text-base text-ink">
               <ul className="flex flex-col gap-5">
                 {navLinks.map((item) => (
-                  <li key={item}>
+                  <li key={item.label}>
                     <a
-                      href="#"
+                      href={item.href}
                       onClick={() => setMobileMenuOpen(false)}
                       className="group relative inline-flex w-fit items-center transition-colors duration-300 hover:text-brass"
                     >
                       <span className="mr-0 h-1 w-1 scale-0 rounded-full bg-brass opacity-0 transition-all duration-300 ease-out group-hover:mr-1.5 group-hover:scale-100 group-hover:opacity-100" />
                       <span className="relative">
-                        {item}
+                        {item.label}
                         <span className="absolute -bottom-1 left-0 h-[1.5px] w-full origin-left scale-x-0 bg-brass transition-transform duration-300 ease-out group-hover:scale-x-100" />
                       </span>
                     </a>
@@ -187,17 +231,41 @@ export function Navbar() {
               <hr className="my-6 border-line" />
 
               <div className="flex items-center justify-between">
-                <a
-                  href="#"
-                  className="group flex items-center gap-2 text-graphite transition-colors duration-300 hover:text-brass"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  <svg width="17" height="17" viewBox="0 0 17 17" fill="none" className="transition-colors group-hover:text-brass">
-                    <circle cx="8.5" cy="5.5" r="3" stroke="currentColor" strokeWidth="1.3" />
-                    <path d="M2.5 15c1-3.2 3.6-5 6-5s5 1.8 6 5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
-                  </svg>
-                  <span>Log in</span>
-                </a>
+                
+                {/* <-- Mobile Auth Section Update --> */}
+                {loading ? (
+                  <div className="flex items-center gap-2 text-graphite">
+                    <svg className="h-4 w-4 animate-spin text-graphite" viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" className="opacity-25" />
+                      <path fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" className="opacity-75" />
+                    </svg>
+                  </div>
+                ) : user ? (
+                  <a
+                    href="/profile"
+                    className="group flex items-center gap-2 text-brass transition-colors duration-300 hover:text-ink"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <svg width="17" height="17" viewBox="0 0 17 17" fill="none" className="transition-colors group-hover:text-ink">
+                      <circle cx="8.5" cy="5.5" r="3" stroke="currentColor" strokeWidth="1.3" />
+                      <path d="M2.5 15c1-3.2 3.6-5 6-5s5 1.8 6 5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+                    </svg>
+                    <span className="font-mono tracking-widest">{getFirstName(user.name)}</span>
+                  </a>
+                ) : (
+                  <a
+                    href="/login"
+                    className="group flex items-center gap-2 text-graphite transition-colors duration-300 hover:text-brass"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <svg width="17" height="17" viewBox="0 0 17 17" fill="none" className="transition-colors group-hover:text-brass">
+                      <circle cx="8.5" cy="5.5" r="3" stroke="currentColor" strokeWidth="1.3" />
+                      <path d="M2.5 15c1-3.2 3.6-5 6-5s5 1.8 6 5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+                    </svg>
+                    <span>Log in</span>
+                  </a>
+                )}
+
                 <ThemeToggle />
               </div>
             </div>

@@ -2,6 +2,7 @@ import "./globals.css";
 import { fraunces, inter, jetbrainsMono } from "./lib/fonts";
 import { ThemeProvider } from "./components/theme-provider";
 import { LenisProvider } from "./components/lenis-provider";
+import { AuthProvider } from "./components/auth-provider"; // <-- Added import
 import { Navbar } from "./components/Navbar";
 import { CustomCursor } from "./components/custom-cursor";
 
@@ -34,11 +35,14 @@ export default function RootLayout({ children }) {
       </head>
       <body className="bg-paper text-ink">
         <ThemeProvider>
-          <LenisProvider>
-            <CustomCursor />
-            <Navbar />
-            <main>{children}</main>
-          </LenisProvider>
+          {/* AuthProvider wraps the layout so Navbar and children can access useAuth() */}
+          <AuthProvider>
+            <LenisProvider>
+              <CustomCursor />
+              <Navbar />
+              <main>{children}</main>
+            </LenisProvider>
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>
