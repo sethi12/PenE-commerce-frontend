@@ -33,7 +33,7 @@ const staggerContainer = {
 
 export default function AboutPage() {
   const { theme } = useTheme();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  // const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const values = [
     {
@@ -66,7 +66,7 @@ export default function AboutPage() {
   return (
     <div className="relative min-h-screen w-full overflow-x-hidden bg-paper font-body text-ink transition-colors duration-500 selection:bg-brass selection:text-paper">
       
-      {/* ───────── Mobile Top Bar (Ensuring Page is Reachable & Navigable) ───────── */}
+      {/* ───────── Mobile Top Bar (Ensuring Page is Reachable & Navigable) ─────────
       <div className="sticky top-0 z-50 flex items-center justify-between border-b border-line bg-paper/80 px-6 py-4 backdrop-blur-md md:hidden">
         <a href="/" className="font-display text-lg font-semibold tracking-tight text-ink">
           Pen<span className="text-brass">Zone</span>
@@ -81,7 +81,7 @@ export default function AboutPage() {
       </div>
 
       {/* Mobile Drawer Menu */}
-      <AnimatePresence>
+      {/* <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
             initial={{ opacity: 0, y: -20 }}
@@ -108,7 +108,7 @@ export default function AboutPage() {
       </AnimatePresence>
 
       {/* ───────── Ambient Background Glows (Animated) ───────── */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+      {/* <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <motion.div
           animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.5, 0.3] }}
           transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
@@ -123,7 +123,7 @@ export default function AboutPage() {
       </div>
 
       <div className="relative z-10 mx-auto max-w-7xl space-y-20 px-6 py-12 md:space-y-32 md:px-10 md:py-32">
-        
+         */} 
         {/* ───────── 1. Hero Section ───────── */}
         <motion.section 
           initial="hidden" 
@@ -302,6 +302,6 @@ export default function AboutPage() {
         </motion.section>
 
       </div>
-    </div>
+
   );
 }
