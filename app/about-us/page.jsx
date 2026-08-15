@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Image from "next/image";
-import { motion, AnimatePresence } from "motion/react";
+import { motion } from "motion/react";
 import {
   Sparkles,
   Feather,
@@ -12,8 +12,6 @@ import {
   ArrowRight,
   Compass,
   Award,
-  Menu,
-  X,
 } from "lucide-react";
 import { useTheme } from "../components/theme-provider";
 
@@ -33,7 +31,6 @@ const staggerContainer = {
 
 export default function AboutPage() {
   const { theme } = useTheme();
-  // const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const values = [
     {
@@ -65,65 +62,8 @@ export default function AboutPage() {
 
   return (
     <div className="relative min-h-screen w-full overflow-x-hidden bg-paper font-body text-ink transition-colors duration-500 selection:bg-brass selection:text-paper">
-      
-      {/* ───────── Mobile Top Bar (Ensuring Page is Reachable & Navigable) ─────────
-      <div className="sticky top-0 z-50 flex items-center justify-between border-b border-line bg-paper/80 px-6 py-4 backdrop-blur-md md:hidden">
-        <a href="/" className="font-display text-lg font-semibold tracking-tight text-ink">
-          Pen<span className="text-brass">Zone</span>
-        </a>
-        <button
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="flex h-10 w-10 items-center justify-center rounded-xl border border-line bg-paper-raised text-ink"
-          aria-label="Toggle Menu"
-        >
-          {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-        </button>
-      </div>
-
-      {/* Mobile Drawer Menu */}
-      {/* <AnimatePresence>
-        {mobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="fixed inset-x-0 top-[73px] z-40 border-b border-line bg-paper p-6 shadow-2xl md:hidden"
-          >
-            <nav className="flex flex-col gap-4 font-mono text-sm uppercase tracking-wider">
-              <a href="/shop" onClick={() => setMobileMenuOpen(false)} className="py-2 text-ink hover:text-brass">
-                Shop Archive
-              </a>
-              <a href="/collections" onClick={() => setMobileMenuOpen(false)} className="py-2 text-ink hover:text-brass">
-                Collections
-              </a>
-              <a href="/about" onClick={() => setMobileMenuOpen(false)} className="py-2 text-brass">
-                Our Story
-              </a>
-              <a href="/contact" onClick={() => setMobileMenuOpen(false)} className="py-2 text-ink hover:text-brass">
-                Contact Us
-              </a>
-            </nav>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* ───────── Ambient Background Glows (Animated) ───────── */}
-      {/* <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <motion.div
-          animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.5, 0.3] }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute left-[10%] top-[-10%] h-[300px] w-[300px] rounded-full bg-brass/10 blur-[100px] md:h-[600px] md:w-[600px] md:blur-[150px]"
-        />
-        <motion.div
-          animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.4, 0.2] }}
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-          className="absolute right-[-10%] top-[30%] h-[250px] w-[250px] rounded-full bg-brass/5 blur-[90px] md:h-[500px] md:w-[500px] md:blur-[120px]"
-        />
-        <div className="absolute bottom-[-10%] left-[-5%] h-[300px] w-[300px] rounded-full bg-line/20 blur-[100px]" />
-      </div>
-
       <div className="relative z-10 mx-auto max-w-7xl space-y-20 px-6 py-12 md:space-y-32 md:px-10 md:py-32">
-         */} 
+        
         {/* ───────── 1. Hero Section ───────── */}
         <motion.section 
           initial="hidden" 
@@ -278,7 +218,6 @@ export default function AboutPage() {
           initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp}
           className="group relative flex flex-col items-center justify-between gap-8 overflow-hidden rounded-[2rem] border border-brass/30 bg-gradient-to-br from-brass/15 via-paper-raised to-paper p-8 md:flex-row md:rounded-[2.5rem] sm:p-16"
         >
-          {/* Animated background element for CTA */}
           <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-brass/20 blur-3xl transition-all duration-700 group-hover:scale-150 group-hover:bg-brass/30" />
 
           <div className="relative z-10 space-y-3 text-center md:text-left md:space-y-4">
@@ -302,6 +241,6 @@ export default function AboutPage() {
         </motion.section>
 
       </div>
-
+    </div>
   );
 }
