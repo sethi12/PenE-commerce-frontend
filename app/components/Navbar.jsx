@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { ThemeToggle } from "./theme-toggle";
 import Image from "next/image";
 import { useTheme } from "./theme-provider";
-import { useAuth } from "./auth-provider"; // <-- Added import
+import { useAuth } from "./auth-provider";
 
 export function PenZoneLogo() {
   const { theme } = useTheme();
@@ -76,7 +76,6 @@ export function Navbar() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
-  // <-- Extract auth state
   const { user, loading } = useAuth(); 
 
   const navLinks = [
@@ -94,7 +93,6 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // <-- Helper to format user name
   const getFirstName = (fullName) => {
     if (!fullName) return "Profile";
     const first = fullName.split(" ")[0];
@@ -150,7 +148,7 @@ export function Navbar() {
             </IconButton>
           </div>
 
-          {/* <-- Desktop Auth Section Update --> */}
+          {/* Desktop Auth Section */}
           <div className="hidden md:flex items-center justify-center min-w-[36px] mx-1">
             {loading ? (
               <svg className="h-4 w-4 animate-spin text-graphite" viewBox="0 0 24 24" fill="none">
@@ -158,7 +156,7 @@ export function Navbar() {
                 <path fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" className="opacity-75" />
               </svg>
             ) : user ? (
-              <a href="/" className="font-mono text-sm tracking-widest text-brass transition-colors hover:text-ink">
+              <a href="/profile" className="font-mono text-sm tracking-widest text-brass transition-colors hover:text-ink">
                 {getFirstName(user.name)}
               </a>
             ) : (
@@ -233,7 +231,7 @@ export function Navbar() {
 
               <div className="flex items-center justify-between">
                 
-                {/* <-- Mobile Auth Section Update --> */}
+                {/* Mobile Auth Section */}
                 {loading ? (
                   <div className="flex items-center gap-2 text-graphite">
                     <svg className="h-4 w-4 animate-spin text-graphite" viewBox="0 0 24 24" fill="none">
