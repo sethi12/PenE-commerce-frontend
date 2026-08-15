@@ -3,14 +3,14 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Mail, Lock, User, ArrowRight, PenTool, Loader2, Eye, EyeOff } from "lucide-react";
-import { useTheme } from "../components/theme-provider"; // Adjust path if needed
+import { useTheme } from "../components/theme-provider";
 
 export default function AuthPage() {
   const { theme } = useTheme();
   
   // UI States
   const [isLogin, setIsLogin] = useState(true);
-  const [showPassword, setShowPassword] = useState(false); // Added toggle state
+  const [showPassword, setShowPassword] = useState(false);
   
   // Form States
   const [name, setName] = useState("");
@@ -19,32 +19,29 @@ export default function AuthPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
 
-  // Animation variants for smooth form switching
+  // Optimized smooth form transition variants
   const formVariants = {
     hidden: (isLoginState) => ({
       opacity: 0,
-      x: isLoginState ? -30 : 30,
-      position: "absolute",
+      x: isLoginState ? -20 : 20,
     }),
     visible: {
       opacity: 1,
       x: 0,
-      position: "relative",
-      transition: { duration: 0.4, ease: "easeOut" },
+      transition: { duration: 0.3, ease: "easeOut" },
     },
     exit: (isLoginState) => ({
       opacity: 0,
-      x: isLoginState ? 30 : -30,
-      position: "absolute",
-      transition: { duration: 0.3, ease: "easeIn" },
+      x: isLoginState ? 20 : -20,
+      transition: { duration: 0.2, ease: "easeIn" },
     }),
   };
 
   const toggleAuthMode = (e) => {
     e.preventDefault();
     setIsLogin(!isLogin);
-    setError(""); // Clear errors on switch
-    setShowPassword(false); // Reset password visibility on switch
+    setError("");
+    setShowPassword(false);
   };
 
   const handleSubmit = async (e) => {
@@ -87,15 +84,11 @@ export default function AuthPage() {
         throw new Error(data.message || "Authentication failed");
       }
 
-      console.log("Authentication successful:", data.user);
-
-      // Clear form
       setPassword("");
       if (!isLogin) {
         setName("");
       }
 
-      // Redirect after successful authentication
       window.location.href = "/";
     } catch (error) {
       console.error("Authentication error:", error);
@@ -106,26 +99,23 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-paper px-4 py-12 font-body text-ink transition-colors duration-500 selection:bg-brass selection:text-paper">
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-paper px-4 py-12 font-body text-ink selection:bg-brass selection:text-paper">
       
-      {/* ───────── Ambient Background Glows ───────── */}
+      {/* ───────── Optimized Static Ambient Glows (No CPU-heavy infinite loops) ───────── */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <motion.div
-          animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.5, 0.3] }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute left-[20%] top-[-10%] h-[500px] w-[500px] rounded-full bg-brass/10 blur-[120px]"
-        />
-        <div className="absolute bottom-[-10%] right-[10%] h-[400px] w-[400px] rounded-full bg-line/20 blur-[100px]" />
+        <div className="absolute left-[20%] top-[-10%] h-[500px] w-[500px] rounded-full bg-brass/10 blur-[90px]" />
+        <div className="absolute bottom-[-10%] right-[10%] h-[400px] w-[400px] rounded-full bg-line/20 blur-[80px]" />
       </div>
 
       {/* ───────── Auth Container ───────── */}
       <motion.div 
-        initial={{ opacity: 0, y: 30 }}
+        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
         className="relative z-10 w-full max-w-md"
       >
-        <div className="relative overflow-hidden rounded-[2rem] border border-line bg-paper-raised p-8 shadow-2xl backdrop-blur-xl sm:p-12">
+        {/* Reduced heavy backdrop blur from xl to md for smooth rendering */}
+        <div className="relative overflow-hidden rounded-[2rem] border border-line bg-paper-raised p-8 shadow-xl backdrop-blur-md sm:p-12">
           
           {/* Decorative Background Pattern */}
           <div className="absolute inset-0 z-0 bg-[radial-gradient(var(--tw-gradient-stops))] from-brass/10 to-transparent [background-size:16px_16px] opacity-30" />
@@ -148,7 +138,7 @@ export default function AuthPage() {
 
             {/* Form Area */}
             <div className="relative">
-              <AnimatePresence custom={isLogin} mode="popLayout">
+              <AnimatePresence custom={isLogin} mode="wait">
                 <motion.form
                   key={isLogin ? "login" : "signup"}
                   custom={isLogin}
@@ -218,14 +208,13 @@ export default function AuthPage() {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         disabled={isSubmitting}
-                        // Increased pr-4 to pr-12 so text doesn't hide behind the eye icon
                         className="w-full rounded-xl border border-line bg-paper py-3 pl-12 pr-12 text-sm text-ink outline-none transition-all placeholder:text-graphite/40 focus:border-brass focus:ring-1 focus:ring-brass/50 disabled:opacity-50"
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
                         disabled={isSubmitting}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-graphite/50 transition-colors hover:text-ink disabled:opacity-50 disabled:hover:text-graphite/50"
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-graphite/50 transition-colors hover:text-ink disabled:opacity-50"
                       >
                         {showPassword ? (
                           <EyeOff className="h-5 w-5" />
@@ -238,7 +227,7 @@ export default function AuthPage() {
 
                   {/* Error State */}
                   {error && (
-                    <div className="rounded-xl border border-red-900/30 bg-red-500/10 px-4 py-3 text-sm text-red-500 backdrop-blur-sm dark:text-red-400">
+                    <div className="rounded-xl border border-red-900/30 bg-red-500/10 px-4 py-3 text-sm text-red-500 dark:text-red-400">
                       {error}
                     </div>
                   )}
@@ -247,7 +236,7 @@ export default function AuthPage() {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="group mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-ink py-3.5 text-sm font-medium text-paper transition-all duration-300 hover:bg-brass hover:shadow-[0_0_15px_rgba(var(--brass-rgb),0.3)] disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:bg-ink disabled:hover:shadow-none"
+                    className="group mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-ink py-3.5 text-sm font-medium text-paper transition-all duration-200 hover:bg-brass hover:shadow-md disabled:cursor-not-allowed disabled:opacity-70"
                   >
                     {isSubmitting ? (
                       <>
@@ -257,7 +246,7 @@ export default function AuthPage() {
                     ) : (
                       <>
                         {isLogin ? "Sign In" : "Create Account"}
-                        <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                        <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
                       </>
                     )}
                   </button>
