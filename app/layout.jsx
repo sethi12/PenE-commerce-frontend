@@ -2,8 +2,9 @@ import "./globals.css";
 import { fraunces, inter, jetbrainsMono } from "./lib/fonts";
 import { ThemeProvider } from "./components/theme-provider";
 import { LenisProvider } from "./components/lenis-provider";
-import { AuthProvider } from "./components/auth-provider"; // <-- Added import
+import { AuthProvider } from "./components/auth-provider";
 import { Navbar } from "./components/Navbar";
+import { Footer } from "./components/footer"; // <-- Added Footer import
 import { CustomCursor } from "./components/custom-cursor";
 
 export const metadata = {
@@ -41,6 +42,7 @@ export default function RootLayout({ children }) {
               <CustomCursor />
               <Navbar />
               <main>{children}</main>
+              <Footer /> {/* <-- Added Footer component here */}
             </LenisProvider>
           </AuthProvider>
         </ThemeProvider>

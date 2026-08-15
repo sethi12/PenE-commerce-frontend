@@ -1,7 +1,11 @@
 "use client";
 
+import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { motion } from "motion/react";
+import Link from "next/link";
+import Image from "next/image";
+import { Loader2, ArrowRight, Package } from "lucide-react";
 import { Footer } from "./components/footer";
 
 // The pen scene touches window/canvas — keep it client-only, no SSR.
@@ -18,14 +22,32 @@ function NibScratch() {
   );
 }
 
-const collection = [
-  { no: "001", name: "The Meridian", material: "Brushed steel · fine nib", price: "$185" },
-  { no: "002", name: "The Foundry", material: "Ebonite · medium nib", price: "$240" },
-  { no: "003", name: "The Cartographer", material: "Brass barrel · italic nib", price: "$210" },
-  { no: "004", name: "The Solicitor", material: "Ebony resin · fine nib", price: "$260" },
-];
-
 export default function Home() {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const baseUrl = process.env.NEXT_PUBLIC_API_URL || "";
+        const response = await fetch(`${baseUrl}/api/products`);
+        
+        if (response.ok) {
+          const data = await response.json();
+          const productList = data.products || data;
+          // Take the first 4 products for the home collection showcase
+          setProducts(productList.slice(0, 4));
+        }
+      } catch (error) {
+        console.error("Failed to fetch products for home showcase:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
   return (
     <div className="bg-paper">
       {/* ---------------- Hero ---------------- */}
@@ -79,31 +101,89 @@ export default function Home() {
           <div>
             <span className="label-mono">The collection</span>
             <h2 className="mt-2 font-display text-3xl italic text-ink sm:text-4xl">
-              Four pens, one standard.
+              Curated instruments, uncompromising standard.
             </h2>
           </div>
         </div>
 
-        <div className="flex snap-x snap-mandatory gap-6 overflow-x-auto pb-4">
-          {collection.map((pen, i) => (
-            <motion.article
-              key={pen.no}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.4 }}
-              transition={{ duration: 0.5, delay: i * 0.08 }}
-              className="group w-64 shrink-0 snap-start rounded-2xl border border-line bg-paper-raised p-6 transition-colors hover:border-brass"
-            >
-              <span className="label-mono">No. {pen.no}</span>
-              <div className="my-6 flex h-32 items-center justify-center">
-                <div className="h-24 w-1.5 rounded-full bg-gradient-to-b from-ink via-ink to-brass transition-transform duration-500 group-hover:-translate-y-1 group-hover:rotate-6" />
-              </div>
-              <h3 className="font-display text-xl italic text-ink">{pen.name}</h3>
-              <p className="mt-1 font-body text-sm text-graphite">{pen.material}</p>
-              <p className="mt-4 font-mono text-sm text-brass">{pen.price}</p>
-            </motion.article>
-          ))}
-        </div>
+        {loading ? (
+          <div className="flex h-48 w-full items-center justify-center">
+            <Loader2 className="h-6 w-6 animate-spin text-brass" />
+          </div>
+        ) : products.length === 0 ? (
+          <div className="py-12 text-center font-body text-graphite text-sm">
+            No instruments available at the moment.
+          </div>
+        ) : (
+          <div className="flex snap-x snap-mandatory gap-6 overflow-x-auto pb-6 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+            {products.map((product, i) => {
+              const productId = product._id || product.id;
+              const productName = product.name || "Signature Instrument";
+              const productPrice = product.discountedPrice || product.price || 0;
+              const imageUrl = product.mainImage?.url;
+
+              return (
+                <motion.article
+                  key={productId}
+                  initial={{ opacity: 0, y: 24 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.4 }}
+                  transition={{ duration: 0.5, delay: i * 0.08 }}
+                  className="group w-72 sm:w-80 shrink-0 snap-start flex flex-col"
+                >
+                  {/* Large Border Image Frame */}
+                  <Link href={`/products/${productId}`} className="group/img block">
+                    <div className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl border border-line bg-paper transition-all duration-500 group-hover:border-brass group-hover:shadow-xl group-hover:shadow-brass/5">
+                      {imageUrl ? (
+                        <Image
+                          src={imageUrl}
+                          alt={productName}
+                          fill
+                          className="object-contain p-8 transition-transform duration-700 ease-out group-hover/img:scale-105"
+                          sizes="(max-width: 768px) 100vw, 320px"
+                        />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center">
+                          <Package className="h-10 w-10 text-graphite/20" />
+                        </div>
+                      )}
+
+                      {/* Numbering Pill */}
+                      <div className="absolute left-4 top-4 z-10">
+                        <span className="rounded-full border border-line bg-paper/80 px-2.5 py-1 font-mono text-[10px] text-brass backdrop-blur-sm">
+                          {String(i + 1).padStart(3, "0")}
+                        </span>
+                      </div>
+
+                      {/* Explore Hover Button */}
+                      <div className="absolute bottom-4 right-4 z-10 flex h-10 w-10 items-center justify-center rounded-full border border-line bg-paper/90 opacity-0 backdrop-blur-md transition-all duration-300 group-hover/img:opacity-100 group-hover/img:border-brass group-hover/img:bg-brass group-hover/img:text-paper">
+                        <ArrowRight className="h-4 w-4" />
+                      </div>
+                    </div>
+                  </Link>
+
+                  {/* Product Information Below */}
+                  <div className="mt-4 flex flex-col gap-1 px-1">
+                    <div className="flex items-center justify-between">
+                      <Link href={`/products/${productId}`}>
+                        <h3 className="font-display text-xl italic text-ink transition-colors group-hover:text-brass line-clamp-1">
+                          {productName}
+                        </h3>
+                      </Link>
+                      <span className="font-mono text-sm font-medium text-brass">
+                        ₹{Number(productPrice).toLocaleString("en-IN")}
+                      </span>
+                    </div>
+
+                    <p className="font-body text-xs text-graphite line-clamp-1">
+                      {product.description || "Hand-balanced writing instrument."}
+                    </p>
+                  </div>
+                </motion.article>
+              );
+            })}
+          </div>
+        )}
       </section>
 
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
@@ -151,8 +231,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ---------------- Footer ---------------- */}
-      <Footer/>
+    
     </div>
   );
 }
