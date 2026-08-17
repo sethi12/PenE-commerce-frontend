@@ -613,7 +613,7 @@ export function Navbar() {
                             {searchResults.brands.map((brand) => (
                               <a
                                 key={brand._id || brand.id}
-                                href={`/brands/${brand._id || brand.id}`}
+                                href={`/brands`}
                                 onClick={() => setSearchOpen(false)}
                                 className="block rounded-lg p-2.5 sm:p-2 font-medium text-ink transition-colors hover:bg-brass/10 hover:text-brass truncate"
                               >

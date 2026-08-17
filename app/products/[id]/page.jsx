@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { useParams, useRouter } from "next/navigation";
+import { useAuth } from "../../components/auth-provider";
 import Image from "next/image";
 import {
   Loader2,
@@ -41,7 +42,7 @@ export default function ProductDetailPage() {
   // Image gallery states
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const allImagesRef = useRef([]);
-
+const { user, loading: authLoading } = useAuth();
   // Auto-scroll effect for gallery (4s delay per image as requested)
   useEffect(() => {
     if (allImagesRef.current.length <= 1) return;
@@ -134,10 +135,97 @@ export default function ProductDetailPage() {
   const handleIncrement = () => setQuantity((prev) => prev + 1);
   const handleDecrement = () => setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
 
-  const handleAddToCart = () => {
+const handleAddToCart = async () => {
+  if (!productId) return;
+
+  try {
     setIsAddingToCart(true);
-    setTimeout(() => setIsAddingToCart(false), 1000);
-  };
+
+    const baseUrl =
+      process.env.NEXT_PUBLIC_API_URL || "";
+
+    // ---------------------------------------------
+    // Create/get guest cart ID
+    // ---------------------------------------------
+
+    let guestCartId =
+      localStorage.getItem("penzone_guest_cart");
+
+    if (!guestCartId) {
+      guestCartId = crypto.randomUUID();
+
+      localStorage.setItem(
+        "penzone_guest_cart",
+        guestCartId
+      );
+    }
+
+    console.log(
+      "Guest cart ID:",
+      guestCartId
+    );
+
+    // ---------------------------------------------
+    // Add to cart
+    // ---------------------------------------------
+
+    const response = await fetch(
+      `${baseUrl}/api/cart`,
+      {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json",
+
+          // Send guest cart ID
+          "x-cart-id": guestCartId,
+        },
+
+        body: JSON.stringify({
+          productId,
+          quantity,
+
+          // Also send it in body
+          // as a fallback
+          cartId: guestCartId,
+        }),
+      }
+    );
+
+    const data =
+      await response.json();
+
+    console.log(
+      "Add cart response:",
+      data
+    );
+
+    if (!response.ok) {
+      throw new Error(
+        data.message ||
+          "Failed to add product to cart"
+      );
+    }
+
+    // Success
+    setTimeout(() => {
+      setIsAddingToCart(false);
+    }, 700);
+
+  } catch (error) {
+    console.error(
+      "Add to cart error:",
+      error
+    );
+
+    alert(
+      error.message ||
+        "Failed to add product to cart"
+    );
+
+    setIsAddingToCart(false);
+  }
+};
 
   const handleBuyNow = () => {
     router.push(`/checkout?product=${productId}&qty=${quantity}`);
